@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <title> ちゃちゃっとチャット</title>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand m-2" href="#">ちゃちゃっとチャット</a>
+        </nav>
+        <div class="p-3" style="border: 1px solid;height:37rem;overflow-y:scroll;" id="chatArea">
+            {% for rec in chatData %}
+                <div class="chats">
+                    {% if rec.name == myName %}
+                        <div style="text-align: right; font-size:small;">{{ rec.name }}</div>
+                        <div style="text-align: right; font-size:large;">{{ rec.message }}</div>
+                    {% else %}
+                        <div style="text-align: left; font-size:small;">{{ rec.name }}</div>
+                        <div style="text-align: left; font-size:large;">{{ rec.message }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <form action="http://127.0.0.1:5000" method="GET">
+            <div style="display: flex; 
+                flex-direction:row; 
+                bottom:0px; 
+                position:fixed; 
+                width:85%;
+                margin-bottom:25px;">
+                    <input type="text" placeholder="メッセージ" style="flex-grow: 8;" name="message"/>
+                    <div style="flex-grow: 1;"></div>
+                    <input type="submit" value="送信" style="flex-grow: 1;" />
+            </div>
+        <form>
+    </div>
+    <script>
+        var chatAreaElement = document.getElementById("chatArea");
+        var bottom =chatAreaElement.scrollHeight - chatAreaElement.clientHeight;
+        chatAreaElement.scroll(0, bottom);
+        setInterval(()=>{
+            fetch("/check_update")
+            .then(res => res.json())
+            .then((res) => {
+                if(res.chatSize != document.getElementsByClassName("chats").length){
+                    location.href = "/";
+                }
+            });
+        },1000);
+    </script>
+</body>
+
+</html>
